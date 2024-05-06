@@ -7,7 +7,6 @@
 close all
 clear all
 clc           
-
 %--------------------------------------------------------------------------
 %% Run Vivado FPGA simulator; External tool
 %--------------------------------------------------------------------------
@@ -20,7 +19,7 @@ convert_vectors_to_decimal; % after COPYING from viv wk "fft_1d_mem_raw_vevtors"
 % Generate Xilinx MAT data to be checked
 if exist('complex_image_array','var')
     disp(' Generate MAT Xilinx file for 1-D FFT checking');
-    save('fft_1d_seq_matrix_fr_viv_sim.mat','complex_image_array');
+    save('./data/fft_1d_seq_matrix_fr_viv_sim.mat','complex_image_array');
     clearvars;
 else
     error('Error: Could not generate MAT Xilinx file for testing');
@@ -32,7 +31,7 @@ run_xfft_v9_1_pipe_mex_1d_fft_no_shift;
 
 if exist('ImgByRow','var')
     disp(' Generate MAT file for 1-D FFT checking');
-    save('fft_1d_seq_matrix_fr_matlab.mat','ImgByRow'); %% no fftshift
+    save('./data/fft_1d_seq_matrix_fr_matlab.mat','ImgByRow'); %% no fftshift
     close all; clearvars;
 else
     error('Error: Could not generate MAT file for testing');

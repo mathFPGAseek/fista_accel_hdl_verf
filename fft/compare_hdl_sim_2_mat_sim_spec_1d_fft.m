@@ -27,8 +27,8 @@ clear all
 close all
 
 % load hdl sim and matlab sim
-load('fft_1d_seq_matrix_fr_viv_sim.mat');
-load('fft_1d_seq_matrix_fr_matlab.mat');
+load('./data/fft_1d_seq_matrix_fr_viv_sim.mat');
+load('./data/fft_1d_seq_matrix_fr_matlab.mat');
 
 % rename arrays
 ImgByRowFrHdlSimSeq = complex_image_array; % import fft-1d from hdl sim
@@ -71,6 +71,7 @@ end
 reorderedHdlSim         = fftshift(reorderedHdlSim,2);
 reorderedspectrumMatSim = fftshift(ImgByRowFrMatSimSeq,2);
 
+%{
 % arrange sequences as columns for debugging
 TransposeImgByRowFrHdlSimSeq     = reorderedHdlSim(120,:)';
 TransposeImgByRowFrMatSimSeq     = reorderedspectrumMatSim(120,:)';
@@ -82,7 +83,21 @@ reorderedHdlSimMag  = abs(reorderedHdlSim);
 
 diff = reorderedMatSimMag  - reorderedHdlSimMag;
 surf(diff,'edgecolor','none');
+%}
+re_reorderedHdlSim = real(reorderedHdlSim(:));
+im_reorderedHdlSim = imag(reorderedHdlSim(:));
 
+re_reorderedspectrumMatSim = real(reorderedspectrumMatSim(:));
+im_reorderedspectrumMatSim = imag(reorderedspectrumMatSim(:));
 
+figure(1)
+title('Real differences HDL Sim vs Matlab model');
+plot(re_reorderedHdlSim - re_reorderedspectrumMatSim);
+
+figure(2)
+title('Imaginary differences HDL Sim vs Matlab model ');
+plot(im_reorderedHdlSim - im_reorderedspectrumMatSim );
+
+disp('Testing complete, check plots  ')
 
 debug = 1;
