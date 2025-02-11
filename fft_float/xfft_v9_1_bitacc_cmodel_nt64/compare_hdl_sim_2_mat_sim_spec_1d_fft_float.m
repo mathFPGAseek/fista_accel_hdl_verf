@@ -71,19 +71,8 @@ end
 reorderedHdlSim         = fftshift(reorderedHdlSim,2);
 reorderedspectrumMatSim = fftshift(ImgByRowFrMatSimSeq,2);
 
-%{
-% arrange sequences as columns for debugging
-TransposeImgByRowFrHdlSimSeq     = reorderedHdlSim(120,:)';
-TransposeImgByRowFrMatSimSeq     = reorderedspectrumMatSim(120,:)';
+%% 
 
-
-% compare mag
-reorderedMatSimMag  = abs(reorderedspectrumMatSim );
-reorderedHdlSimMag  = abs(reorderedHdlSim);
-
-diff = reorderedMatSimMag  - reorderedHdlSimMag;
-surf(diff,'edgecolor','none');
-%}
 re_reorderedHdlSim = real(reorderedHdlSim(:));
 im_reorderedHdlSim = imag(reorderedHdlSim(:));
 

@@ -61,6 +61,7 @@ PreImage = zeros(sizeX,sizeY);
 % Generics for this smoke test
 %generics.C_NFFT_MAX = 10;
 generics.C_NFFT_MAX = 8;
+%generics.C_NFFT_MAX = 256;
 
 generics.C_ARCH = 1;
 generics.C_HAS_NFFT = 0;
@@ -83,27 +84,31 @@ N_imp = 16;
 [ image_out] = center_impulse(N_imp,N_image,Max_value);
 %X = uint8(image_out);
 
-% debug 
-load('C:\design\mig_zcu_104_2\fista_accel_verf\fista_accel_hdl_verf\fft_float\xfft_v9_1_bitacc_cmodel_nt64\debug\hacked_img.mat');
+% debug
+load('C:\design\mig_zcu_104_2\fista_accel_verf\fista_accel_hdl_verf\fft_float\xfft_v9_1_bitacc_cmodel_nt64\data\point_src.mat'); 
+%load('C:\design\mig_zcu_104_2\fista_accel_verf\fista_accel_hdl_verf\fft_float\xfft_v9_1_bitacc_cmodel_nt64\debug\hacked_img.mat'); % this gives us 1E-6
 %load('C:\design\mig_zcu_104_2\fista_accel_verf\fista_accel_hdl_verf\fft_float\xfft_v9_1_bitacc_cmodel_nt64\debug\hacked_img_with_one_more_col_of_zeros.mat');
 %load('C:\design\mig_zcu_104_2\fista_accel_verf\fista_accel_hdl_verf\fft_float\xfft_v9_1_bitacc_cmodel_nt64\debug\hacked_img_corrected.mat');
 
-% debug single line
-
-X = hacked_img;
+%X = hacked_img; % This gave us 1E-6
+X = mem_array;
 
 % Handle multichannel FFTs if required
 for channel = 1:channels
    for i = 1 : sizeX
 
-        % debug; First line below nominal flow; second & third line is for
-        % debug
-        input_raw = double(double(X(i,:))/(Max_value+1)); 
+        % This is from point source using correct float reprsentation
+        %input_raw = vpa(X(i,:));
+         input_raw = X(i,:);
+         input_raw = double(input_raw);
+
+        %input_raw = double(double(X(i,:))/(Max_value+1)); % This gives us
+        %1E-6
+
+        % debug test vector
         %input_raw_sample = single(5.00000009770741e-26 + 5.00000009770741e-26i);
         %input_raw = repmat(input_raw_sample, [ 1 sizeX]);
-
-        input_raw = double(input_raw);
-        %input_raw = single(input_raw);
+        %input_raw = double(input_raw);
 
 
         % Create input data frame: constant data
@@ -123,7 +128,8 @@ for channel = 1:channels
         end
   
         % Set point size for this transform
-        nfft = generics.C_NFFT_MAX;
+        %nfft = generics.C_NFFT_MAX;
+        nfft = 256;
   
         % Set up scaling schedule: scaling_sch[1] is the scaling for the first stage
         % Scaling schedule to 1/N: 
@@ -139,7 +145,8 @@ for channel = 1:channels
         end
 
         % Set FFT (1) or IFFT (0)
-        direction = 1;
+        %direction = 1;
+        direction = 0;
       
         if channels > 1
             fprintf('Running the MEX function for channel %d...\n',channel)
@@ -150,6 +157,8 @@ for channel = 1:channels
         % debug
         if i == 121
             debug = 1;
+            %input = [input(1:120),input(120),input(121:128),input(129:end-1) ];
+            %nfft = 256;
         end
   
         % Run the MEX function
@@ -233,6 +242,7 @@ end
 %--------------------------------------------------
 %% functions
 %--------------------------------------------------
+
 
 function [ image_out] = center_impulse(N_imp,N_image,Max_value)
 % center a N_impxN_imp inside of a N_image x N_image

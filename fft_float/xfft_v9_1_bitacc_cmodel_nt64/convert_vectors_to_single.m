@@ -42,10 +42,41 @@ size_string = size(fft1dmemvectors,1);
 %[StringSplitArrayImagOut, StringSplitArrayRealOut] = SplitStringArray(fft1dmemvectors,fixed_point_length,size_string);
 [StringSplitArrayImagOut, StringSplitArrayRealOut] = SplitStringArray(fft1dmemvectors,float_point_length,size_string); % TEMP DEBUG!!!
 
+for i = 1: size_string
+    sample_real_str = StringSplitArrayRealOut(i);
+    sample_imag_str = StringSplitArrayImagOut(i);
+    % debug
+    %sample_str = "00010001000100011000100010001000"
+    sample_real_hex = binToHex(sample_real_str); % char
+    sample_imag_hex = binToHex(sample_imag_str); % char
+    % convert binary to hex
+    ArrayImageRealHex{i} = sample_real_hex; % store chars as cells to accumulate 
+    ArrayImageImagHex{i} = sample_imag_hex; % store chars as cells to accumulate 
+
+end
+
+
+%?? convert hex to single
+% This should give us our test vector ; Try this to make sure this works!
+debug = 1;
+%hexStr = '3F800000';
+for i = 1 : size_string
+    hexRealStr = ArrayImageRealHex{i};
+    hexImagStr = ArrayImageImagHex{i};
+
+    %debug 
+    %hexStr  = '0015779688';
+    floatRealValue(i) = hexToSingle(hexRealStr);
+    floatImagValue(i) = hexToSingle(hexImagStr);
+    debug = 1;
+end 
+
+debug = 1;
+
 
 % convert to decimal - Pass String Array 
-[S_imag_array] = ConvStringArray2CellArray(StringSplitArrayImagOut,size_string);
-[S_real_array] = ConvStringArray2CellArray(StringSplitArrayRealOut,size_string);
+%[S_imag_array] = ConvStringArray2CellArray(StringSplitArrayImagOut,size_string);
+%[S_real_array] = ConvStringArray2CellArray(StringSplitArrayRealOut,size_string);
 
 % Write into an array to compare to 2-d fft model
 r = size_string/rows;
@@ -55,8 +86,12 @@ s_imag_numeric_array = zeros(r,c);
 s_real_numeric_array = zeros(r,c);
 for i = 1 : r
     for j = 1 : c
-       s_imag_numeric_array(i,j) = S_imag_array{k};
-       s_real_numeric_array(i,j) = S_real_array{k};
+       %s_imag_numeric_array(i,j) = S_imag_array{k};
+       s_imag_numeric_array(i,j) = floatImagValue(k);
+
+       %s_real_numeric_array(i,j) = S_real_array{k};
+       s_real_numeric_array(i,j) = floatRealValue(k);
+
        k = k +1;
     end
 end
@@ -72,6 +107,52 @@ debug = 1;
 %--------------------------------------------------------------------
 %% Functions
 %--------------------------------------------------------------------
+function hexStr = binToHex(binStr)
+
+   %??? tomorrow try a nonzero hex
+   %?? tried zero and got zer
+   %?? why do I get a 1x2 string
+   %?? I think that the binary string needs to be a char array
+
+    binChar = convertStringsToChars(binStr);
+    debug = 1;
+
+    % Converts a binary string to hexadecimal
+    %binStr - Input binary string (e.g., '110101101')
+    %binStr = '110101101';
+    % Ensure the length of the binary string is a multiple of 4
+    % Padding with leading zeros if necessary
+    n = length(binStr);
+    if mod(n, 4) ~= 0
+        binStr = [repmat('0', 1, 4 - mod(n, 4)), binStr];
+    end
+    
+    % Convert binary string to decimal
+    decimalValue = bin2dec(binStr(2));
+    
+    % Convert decimal to hexadecimal
+    hexStr = dec2hex(decimalValue);
+    
+    % Display the result
+    %disp(['Binary: ', binStr]);
+    %disp(['Hexadecimal: ', hexStr]);
+end
+
+function floatValue = hexToSingle(hexStr)
+    % Converts a hexadecimal string to a single-precision floating point number
+    % hexStr - Hexadecimal string (e.g., '3F800000' for 1.0 in IEEE 754 format)
+    
+    % Convert hex string to a 32-bit unsigned integer
+    uint32Value = uint32(hex2dec(hexStr));
+    
+    % Convert the 32-bit unsigned integer to single-precision floating point
+    floatValue = typecast(uint32Value, 'single');
+    
+    % Display the result
+    %disp(['Hexadecimal: ', hexStr]);
+    %disp(['Single precision floating-point value: ', num2str(floatValue)]);
+end
+
 function [DecimalOut] = Conv2Dec(S)
     signV      = S{1} - '0';
     expV       = S{2} - '0';
