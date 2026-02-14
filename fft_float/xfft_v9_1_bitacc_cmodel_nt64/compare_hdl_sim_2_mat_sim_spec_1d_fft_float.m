@@ -37,7 +37,7 @@ ImgByRowFrMatSimSeq = ImgByRow; % import fft-1d from matlab
 clear vars complex_image_array ImgByRow
 
 % reorder array conversion from hdl sim
-
+%{
 hdl_sim_order = [0  128 64 192	32	160	96	224	16	144	80	208	48	176	112	240	8	136	72	200	40	168	104	232	24	152	88	216	56	184	120	248 ...
                  4	132 68 196	36	164	100 228	20	148	84	212	52	180	116	244	12	140	76	204	44	172	108	236	28	156	92	220	60	188	124	252 ...
                  2	130 66 194	34	162	98	226	18	146	82	210	50	178	114	242	10	138	74	202	42	170	106	234	26	154	90	218	58	186	122	250 ...
@@ -87,7 +87,23 @@ title('Real differences HDL Sim vs Matlab model');
 figure(2)
 plot(im_reorderedHdlSim - im_reorderedspectrumMatSim );
 title('Imaginary differences HDL Sim vs Matlab model ');
+%}
 
+
+re_HdlSim = real(ImgByRowFrHdlSimSeq(:));
+im_HdlSim = imag(ImgByRowFrHdlSimSeq(:));
+
+re_MatSim = real(ImgByRowFrMatSimSeq(:));
+im_MatSim = imag(ImgByRowFrMatSimSeq(:));
+
+figure(1)
+plot(re_HdlSim - re_MatSim);
+title('Real differences HDL Sim vs Matlab model');
+
+
+figure(2)
+plot(im_HdlSim - im_MatSim );
+title('Imaginary differences HDL Sim vs Matlab model ');
 
 disp('Testing complete, check plots  ')
 

@@ -34,9 +34,25 @@ float_point_length = 32;
 
 % Import Table
 % DO NOT USE THIS LINE fft1dmemvectors = importfile("C:\design\mig_zcu_104_2\ddr4_0_ex\ddr4_0_ex.sim\sim_1\behav\xsim\fft_1d_mem_raw_vectors.txt", [1, Inf]);
-fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2\ddr4_0_ex\ddr4_0_ex.sim\sim_1\behav\xsim\fft_1d_mem_raw_float_vectors.txt", [1, Inf]); % TEMP DEBUG !!!
+%fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2\ddr4_0_ex\ddr4_0_ex.sim\sim_1\behav\xsim\fft_1d_mem_raw_float_vectors.txt", [1, Inf]); % TEMP DEBUG !!!
+% Added gen proc H logic
+%fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2022dot2\ddr4_0_ex_20250308_dev_work_with_v2022doot2.xpr\ddr4_0_ex\ddr4_0_ex.sim\sim_1\behav\xsim\fft_1d_mem_raw_float_vectors.txt", [1, Inf]); % TEMP DEBUG !!!
+% Lenless Accel project cleaned up; regression test for 1d fft
+% fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2022dot2_clean\lensless_accel\lensless_accel.sim\sim_1\behav\xsim\fft_1d_mem_raw_float_vectors.txt",[1,Inf]);
+% restart proj simulation 1/22/26 ; When we checked in 2/26 not matching
+%fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2022dot2_clean_recreate3\lensless_accel\lensless_accel.sim\sim_1\behav\xsim\fft_1d_mem_raw_float_vectors.txt",[1,Inf]);
+
+% Capture fft1d @ memory tranpose module
+fft1dmemvectors  = importfile("C:\design\mig_zcu_104_2022dot2_clean_recreate3\lensless_accel\lensless_accel.sim\sim_1\behav\xsim\MEM_TRANSPOSE_row_wr_mem_raw_fft_1d_float_vectors.txt",[1,Inf]);
+
+% debug from 1d FFT with point source; 2nd and 3rd This has a bug with the
+% StringSplit Array!!
+%fft1dmemvectors = ["00001111011100011011000000010110100000111100001100000101010001110000";
+%                   "00101111100100001000110111001011010010111101001011100111001101011100";];
 
 size_string = size(fft1dmemvectors,1);
+
+
 
 % Split into Real and Imag Strings
 %[StringSplitArrayImagOut, StringSplitArrayRealOut] = SplitStringArray(fft1dmemvectors,fixed_point_length,size_string);
@@ -65,7 +81,8 @@ for i = 1 : size_string
     hexImagStr = ArrayImageImagHex{i};
 
     %debug 
-    %hexStr  = '0015779688';
+    %hexRealStr  = '003F800000'; % 1 (dec)
+    %hexRealStr  = '0015779688'; % 5E^-26
     floatRealValue(i) = hexToSingle(hexRealStr);
     floatImagValue(i) = hexToSingle(hexImagStr);
     debug = 1;

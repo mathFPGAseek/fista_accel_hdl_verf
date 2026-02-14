@@ -165,8 +165,8 @@ for channel = 1:channels
         [output, blkexp, overflow] = xfft_v9_1_bitacc_mex(generics, nfft, input, scaling_sch, direction);
   
         % Gather up 1D FFT for image
-        %ImgByRow(i,:) = (fftshift(output));
-         ImgByRow(i,:) = output;
+        ImgByRow(i,:) = (fftshift(output));
+        %ImgByRow(i,:) = output;
 
 
    end % input lines
