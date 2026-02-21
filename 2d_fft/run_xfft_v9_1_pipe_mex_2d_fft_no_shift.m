@@ -121,8 +121,8 @@ for channel = 1:channels
   
   % Run the MEX function
   [output, blkexp, overflow] = xfft_v9_1_bitacc_mex(generics, nfft, input, scaling_sch, direction);
-  ImgByRow(i,:) = (fftshift(output));
-  %ImgByRow(i,:) = output;
+  %ImgByRow(i,:) = (fftshift(output));
+  ImgByRow(i,:) = output;
 
   % Check overflow if used: scaling schedule should ensure that overflow never occurs
   if generics.C_HAS_SCALING == 1 && generics.C_HAS_BFP == 0
